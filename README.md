@@ -50,7 +50,7 @@ pip install -r requirements.txt
 
 For example
 ```shell
-wget -O checkpoints/prime_base.pt https://lianglab.sjtu.edu.cn/files/Prime-2023/prime_base.pt
+wget -O checkpoints/prime_base.pt https://lianglab.sjtu.edu.cn/files/Prime-2023/Base_model/prime_base.pt
 ```
 
 **Predicting Mutant Effect**
