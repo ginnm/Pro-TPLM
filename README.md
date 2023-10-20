@@ -44,22 +44,21 @@ torch==2.0.1
 pip install -r requirements.txt
 ```
 
-**Download Model**
+**Download checkpoints of PRIME**
 
-[prime-base](https://drive.google.com/file/d/1sjl-0JNBr5EH5PXy6dbkcZaO50zYklGe/view)
+[Our official files website](https://lianglab.sjtu.edu.cn/files/Prime-2023/)
 
-[prime-fine-tuning-for-tm-datasets](https://drive.google.com/file/d/1jo3OMJSCNuB_To2gNjOSCqNVjmqo2dZI/view?usp=drive_link)
-
+For example
+```shell
+wget -O checkpoints/prime_base.pt https://lianglab.sjtu.edu.cn/files/Prime-2023/prime_base.pt
+```
 
 **Predicting Mutant Effect**
-
-Using the prime-base model.
 ```shell
-python predict_mutant.py --model_name prime-base \
---fasta ./datasets/TM/1CF1/1CF1.fasta \
---mutant ./datasets/TM/1CF1/1CF1-7.0.tsv \
---compute_spearman \
---output pred.tsv
+python predict.py --model_path checkpoints/prime_base.pt \
+--fasta ./tm_data/fasta/O25949-7.2.fasta \
+--mutant tm_data/mutant/O25949-7.2.csv \
+--save O25949-7.2.prime_base.csv
 ```
 
 ## 🙋‍♀️ Feedback and Contact
