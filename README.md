@@ -6,7 +6,6 @@
 </div>
 
 <!-- Select some of the point info, feel free to delete -->
-![PyTorch Version](https://img.shields.io/badge/dynamic/json?color=blue&label=pytorch&query=%24.pytorchVersion&url=https%3A%2F%2Fgist.githubusercontent.com/PaParaZz1/54c5c44eeb94734e276b2ed5770eba8d/raw/85b94a54933a9369f8843cc2cea3546152a75661/badges.json)
 [![GitHub license](https://img.shields.io/github/license/ai4protein/Prime)](https://github.com/ai4protein/Prime/blob/main/LICENSE)
 
 Updated on 2023.06.15
