@@ -12,7 +12,7 @@ Updated on 2023.10.20
 
 
 
-## Key Feature
+## Introduction
 
 This repository provides the official implementation of Prime (Protein language model for Intelligent Masked pretraining and Environment (temperature) prediction).
 
@@ -29,7 +29,7 @@ Key feature:
 ### What is Prime?
 Prime, a novel protein language model, has been developed for predicting the Optimal Growth Temperature (OGT) and enabling zero-shot prediction of protein thermostability and activity. This novel approach leverages temperature-guided language modeling.
 <div align="center">
-    <a href="https://"><img width="1000px" height="auto" src="https://github.com/ai4protein/Prime/blob/main/model.jpg"></a>
+    <a href="https://"><img width="1000px" height="auto" src="https://github.com/ai4protein/Prime/blob/main/model.png"></a>
 </div>
 
 
@@ -51,17 +51,9 @@ pip install -r requirements.txt
 [prime-fine-tuning-for-tm-datasets](https://drive.google.com/file/d/1jo3OMJSCNuB_To2gNjOSCqNVjmqo2dZI/view?usp=drive_link)
 
 
-**Predicting OGT**
-```bash
-python predict_ogt.py --model_name prime-base \
---fasta ./datasets/OGT/ogt_small.fasta \
---output ogt_prediction.tsv
-```
-
-
 **Predicting Mutant Effect**
 
-Using the prime-base model. (Recommended)
+Using the prime-base model.
 ```shell
 python predict_mutant.py --model_name prime-base \
 --fasta ./datasets/TM/1CF1/1CF1.fasta \
@@ -69,16 +61,6 @@ python predict_mutant.py --model_name prime-base \
 --compute_spearman \
 --output pred.tsv
 ```
-
-Or using the model that fine-tuned on the homologous sequence of the proteins in the TM dataset.
-```shell
-python predict_mutant.py --model_name prime-tm-fine-tuning \
---fasta ./datasets/TM/1CF1/1CF1.fasta \
---mutant ./datasets/TM/1CF1/1CF1-7.0.tsv \
---compute_spearman \
---output pred.tsv
-```
-
 
 ## 🙋‍♀️ Feedback and Contact
 
