@@ -12,7 +12,6 @@ def main():
     psr.add_argument("--fasta", type=str, required=True)
     psr.add_argument("--mutant", type=str, required=True)
     psr.add_argument("--save", type=str, required=True)
-    psr.add_argument("--no_scan", action="store_true", default=False)
     args = psr.parse_args()
     
     
@@ -25,10 +24,7 @@ def main():
     model.eval()
     model = model.to(device)
 
-    if args.no_scan:
-        df, sequence, offset = df, sequence, 1
-    else:
-        df, sequence, offset = scan_max_mutant(df=df, seq=sequence)
+    df, sequence, offset = scan_max_mutant(df=df, seq=sequence)
 
     sequence_ids = model.tokenize(sequence).to(device)
     attention_mask = torch.ones_like(sequence_ids).to(device)

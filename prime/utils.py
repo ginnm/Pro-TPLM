@@ -16,7 +16,7 @@ def mutant_filter(df, mutant_site=0):
     return trg_df
 
 
-def scan_max_mutant(df, seq, max_len=1022):
+def scan_max_mutant(df, seq, max_len=4096):
     if len(seq) <= max_len:
         return df, seq, 1
 
