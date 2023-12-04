@@ -3,9 +3,6 @@ import torch
 from torch import nn
 from typing import Optional, Tuple
 from dataclasses import dataclass
-from argparse import ArgumentParser
-import pandas as pd
-from Bio import SeqIO
 from typing import Union, List
 
 

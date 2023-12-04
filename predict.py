@@ -12,7 +12,7 @@ def main():
     psr.add_argument("--fasta", type=str, required=True)
     psr.add_argument("--mutant", type=str, required=True)
     psr.add_argument("--save", type=str, required=True)
-    psr.add_argument("--no_scan", action="store_false", default=True)
+    psr.add_argument("--no_scan", action="store_true", default=False)
     args = psr.parse_args()
     
     
