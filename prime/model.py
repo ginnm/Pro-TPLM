@@ -4,6 +4,7 @@ from torch import nn
 from typing import Optional, Tuple
 from dataclasses import dataclass
 from typing import Union, List
+import torch.nn.functional as F
 
 
 @dataclass
@@ -326,7 +327,7 @@ class LMHead(nn.Module):
         return x
 
 
-class ForMaskedLM(nn.Module):
+class ZeroShot(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.model = Model(config)
@@ -344,6 +345,145 @@ class ForMaskedLM(nn.Module):
             attention_mask=attention_mask,
         )
         logits = self.lm_head(sequence_output)
+        return logits
+
+    def tokenize(self, sequence: Union[str, List[str]]):
+        if isinstance(sequence, str):
+            sequence_ids = (
+                [
+                    self.VOCAB["sos"],
+                ]
+                + [self.VOCAB[c] for c in sequence]
+                + [
+                    self.VOCAB["eos"],
+                ]
+            )
+            sequence_ids = torch.tensor([sequence_ids], dtype=torch.long)
+        else:
+            sequence_ids = []
+            for seq in sequence:
+                ids = (
+                    [
+                        self.VOCAB["sos"],
+                    ]
+                    + [self.VOCAB[c] for c in seq]
+                    + [
+                        self.VOCAB["eos"],
+                    ]
+                )
+                sequence_ids.append(torch.tensor(ids, dtype=torch.long))
+            # PAD
+            max_len = max([len(seq) for seq in sequence_ids])
+            for i in range(len(sequence_ids)):
+                sequence_ids[i] = torch.cat(
+                    [
+                        sequence_ids[i],
+                        torch.ones(max_len - len(sequence_ids[i]), dtype=torch.long)
+                        * self.VOCAB["pad"],
+                    ]
+                )
+            sequence_ids = torch.stack(sequence_ids)
+        return sequence_ids
+
+
+class MaskedConv1d(nn.Conv1d):
+    """A masked 1-dimensional convolution layer.
+
+    Takes the same arguments as torch.nn.Conv1D, except that the padding is set automatically.
+        Args :
+            in_channels (int): input channels
+            out_channels (int): output channels
+            kernel_size (int): the kernel width
+            stride (int): filter shift
+            dilation (int): dilation factor
+            groups (int): perform depth-wise convolutions
+            bias (bool): adds learnable bias to output
+        Shape:
+            Input: (N, L, in_channels)
+            input_mask: (N, L, 1), optional
+            Output: (N, L, out_channels)
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: int,
+        stride: int = 1,
+        dilation: int = 1,
+        groups: int = 1,
+        bias: bool = True,
+    ):
+        padding = dilation * (kernel_size - 1) // 2
+        super().__init__(
+            in_channels,
+            out_channels,
+            kernel_size,
+            stride=stride,
+            dilation=dilation,
+            groups=groups,
+            bias=bias,
+            padding=padding,
+        )
+
+    def forward(self, x, mask=None):
+        if mask is not None:
+            x = x * mask
+        return super().forward(x.transpose(1, 2)).transpose(1, 2)
+
+
+class Attention1d(nn.Module):
+    def __init__(self, in_dim):
+        super().__init__()
+        self.layer = MaskedConv1d(in_dim, 1, 1)
+
+    def forward(self, x, mask=None):
+        batch_szie = x.shape[0]
+        attn = self.layer(x)
+        attn = attn.view(batch_szie, -1)
+        if mask is not None:
+            attn = attn.masked_fill_(~mask.view(batch_szie, -1).bool(), float("-inf"))
+        attn = F.softmax(attn, dim=-1).view(batch_szie, -1, 1)
+        out = (attn * x).sum(dim=1)
+        return out
+
+
+class Attention1dPoolingHead(nn.Module):
+    """Outputs of the model with the attention1d"""
+
+    def __init__(self, config, num_labels):
+        super(Attention1dPoolingHead, self).__init__()
+        self.attention1d = Attention1d(in_dim=config.hidden_size)
+        self.linear = nn.Linear(config.hidden_size, config.hidden_size)
+        self.act = nn.Tanh()
+        self.final = nn.Linear(config.hidden_size, num_labels)
+
+    def forward(self, x, mask):
+        x = self.attention1d(x, mask=mask.unsqueeze(-1))
+        x = self.act(self.linear(x))
+        x = self.final(x)
+        return x
+
+
+class SupervisedRegression(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+        self.model = Model(config)
+        self.regression = Attention1dPoolingHead(config, 1)
+        self.VOCAB = {c: i + 4 for i, c in enumerate("LAGVSERTIDPKQNFYMHWCXBUZO")}
+        self.VOCAB = {"sos": 0, "eos": 2, "pad": 1, "unk": 3, **self.VOCAB}
+
+    def forward(
+        self,
+        input_ids: Optional[torch.LongTensor] = None,
+        attention_mask: Optional[torch.Tensor] = None,
+    ):
+        sequence_output = self.model(
+            input_ids,
+            attention_mask=attention_mask,
+        )
+        logits = self.regression(sequence_output)
         return logits
 
     def tokenize(self, sequence: Union[str, List[str]]):

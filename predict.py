@@ -2,8 +2,7 @@ import torch
 from argparse import ArgumentParser
 import pandas as pd
 from prime.utils import read_seq, scan_max_mutant, score_mutant
-from prime.model import Config, ForMaskedLM
-
+from prime.model import Config, ZeroShot
 
 @torch.no_grad()
 def main():
@@ -19,7 +18,7 @@ def main():
     df = pd.read_csv(args.mutant)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = ForMaskedLM(Config())
+    model = ZeroShot(Config())
     model.load_state_dict(torch.load(args.model_path))
     model.eval()
     model = model.to(device)
