@@ -191,5 +191,6 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,linux
 checkpoints/*.pt
 temp.py
+temp2.py
 .githubtoken
 experiment_data/mutant
