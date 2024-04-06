@@ -61,6 +61,13 @@ python predict.py --model_path checkpoints/prime_base.pt \
 --save O25949-7.2.prime_base.csv
 ```
 
+## 🚀 Example Notebooks
+
+- Zero-shot mutant effect prediction, see in this [notebook](/notebooks/zero-shot-mutant-effect-prediction.ipynb).
+- OGT prediction, see in this [notebook](/notebooks/predict_togt.ipynb).
+- Tm prediction, see in this [notebook](/notebooks/predict_tm.ipynb).
+- Topt prediction, see in this [notebook](/notebooks/predict_topt.ipynb).
+
 ## 🙋‍♀️ Feedback and Contact
 
 - [Send Email](mailto:ginnmelich@gmail.com)

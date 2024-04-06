@@ -483,7 +483,7 @@ class SupervisedRegression(nn.Module):
             input_ids,
             attention_mask=attention_mask,
         )
-        logits = self.regression(sequence_output)
+        logits = self.regression(sequence_output, mask=attention_mask)
         return logits
 
     def tokenize(self, sequence: Union[str, List[str]]):
