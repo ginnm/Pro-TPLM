@@ -64,7 +64,7 @@ python predict.py --model_path checkpoints/prime_base.pt \
 ## 🚀 Example Notebooks
 
 - Zero-shot mutant effect prediction, see in this [notebook](/notebooks/zero-shot-mutant-effect-prediction.ipynb).
-- OGT prediction, see in this [notebook](/notebooks/predict_togt.ipynb).
+- OGT prediction, see in this [notebook](/notebooks/predict_ogt.ipynb).
 - Tm prediction, see in this [notebook](/notebooks/predict_tm.ipynb).
 - Topt prediction, see in this [notebook](/notebooks/predict_topt.ipynb).
 
