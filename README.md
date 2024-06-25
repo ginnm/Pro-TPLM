@@ -1,4 +1,4 @@
-# Pro-Prime
+# Pro-TPLM
 
 <!-- Insert the project banner here -->
 <div align="center">
